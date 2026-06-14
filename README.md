@@ -2,8 +2,7 @@
 
 A full-stack, responsive travel planning and budget-tracking application. This application uses a simulated in-memory Java collections database to implement robust User Registration, Authentication, day-by-day Itinerary Planning, Budget Category breakdowns, and Administrative Controls.
 
-## 🚀 Live Demo
-You can view the live frontend here: **[Travel Planner Platform on Vercel](https://travel-platformm-planner.vercel.app/)**
+🚀 **[Live Demo](https://travel-platformm-planner.vercel.app/)**
 *(Note: Because this is a demonstration, the Java backend is designed to run locally. To log in or fetch data, you must run the backend server on your own machine.)*
 
 ## 🌟 Key Features

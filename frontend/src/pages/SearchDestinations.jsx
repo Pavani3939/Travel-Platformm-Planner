@@ -145,35 +145,36 @@ export default function SearchDestinations() {
       {/* Search & AI Recommendation Filters Bar */}
       <div className="glass-card" style={styles.searchBarCard}>
         <div style={styles.searchFiltersRow}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: '2 1 300px' }}>
-            <Search size={20} style={styles.searchIcon} />
+          <div style={{ ...styles.inputContainer, flex: '2 1 300px' }}>
+            <Search size={20} style={styles.inputIcon} />
             <input 
               type="text" 
               className="form-input" 
-              style={styles.searchInput}
+              style={{ ...styles.searchInput, ...styles.inputWithIcon }}
               placeholder="Search by city, country, or keyword..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: '1 1 200px' }}>
+          <div style={{ ...styles.inputContainer, flex: '1 1 200px' }}>
             <span style={styles.currencySymbolIcon}>₹</span>
             <input 
               type="number" 
               className="form-input" 
-              style={styles.inputWithIcon}
+              style={{ ...styles.searchInput, ...styles.inputWithIcon }}
               placeholder="Ideal Budget Limit (₹)"
               value={filterBudget}
               onChange={e => setFilterBudget(e.target.value)}
             />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: '1 1 200px' }}>
-            <Compass size={18} style={styles.searchIcon} />
+          <div style={{ ...styles.inputContainer, flex: '1 1 200px' }}>
+            <Compass size={18} style={styles.inputIcon} />
             <input 
               type="text" 
               className="form-input" 
+              style={{ ...styles.searchInput, ...styles.inputWithIcon }}
               placeholder="Interests / Category"
               value={filterInterest}
               onChange={e => setFilterInterest(e.target.value)}
@@ -397,4 +398,19 @@ const styles = {
     gap: '1rem',
     marginTop: '2rem',
   },
+  searchFiltersRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '1.5rem',
+    width: '100%',
+    flexWrap: 'wrap',
+  },
+  currencySymbolIcon: {
+    position: 'absolute',
+    left: '1.25rem',
+    color: '#6b7280',
+    fontWeight: 'bold',
+    fontSize: '1.1rem',
+  }
 };

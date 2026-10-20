@@ -1,63 +1,44 @@
-# 🌍 Travel Planner Platform
+# Travel Planner Platform
 
-A full-stack, responsive travel planning and budget-tracking application. This application uses a simulated in-memory Java collections database to implement robust User Registration, Authentication, day-by-day Itinerary Planning, Budget Category breakdowns, and Administrative Controls.
+Travel planning app built with React/Vite and a Java Servlet API. The frontend uses server-side session authentication; it does not keep account credentials, trips, itineraries, or expenses in browser storage.
 
-🚀 **[Live Demo](https://travel-platformm-planner-c39i.vercel.app/)**
+## Features
 
-## 🌟 Key Features
-- **Day-by-Day Itinerary Planning:** Interactive schedule editor and budget tracker.
-- **Dual Role System:** Pre-configured Standard User and Administrator roles with distinct access privileges.
-- **No External Database Required:** Uses an innovative, thread-safe in-memory Java Collections simulated database.
-- **Modern Minimalist UI:** Elegant styling with a dark gradient system, glassmorphic cards, and Lucide-React icons.
-- **Administrative Controls:** Platform monitoring and destination catalog management.
+- Account registration and login, with PBKDF2 password hashes and server-managed sessions.
+- Owner-checked trip reads, edits, and deletes in the API.
+- Destination search and budget/interest filters, destination detail pages, and trip creation from destination pages.
+- Day-by-day itinerary suggestions based on trip dates, budget, and entered interests.
+- Existing categorized expense tracking with actual and remaining budget totals.
+- OpenStreetMap location maps and Open-Meteo current weather and forecasts on destination pages.
+- Responsive dashboard/navigation and surfaced loading and service errors.
 
-## 🛠️ Modern Tech Stack & Tooling
-- **Frontend Core:** Built with React.js and styled with Custom Vanilla CSS for a premium dark mode experience.
-- **Backend Architecture:** Java Servlets executing an MVC architecture with session-based authentication.
-- **Build Tools:** Maven for the backend server runtime (with `jetty-maven-plugin`), and Vite for the lightning-fast frontend dev server.
-- **Data Storage:** Java Collections acting as a thread-safe in-memory database simulator.
+## Run locally
 
-## 📂 Project Structure
-```text
-Travel Planner Platform/
-├── backend/
-│   ├── pom.xml                                   # Maven dependency file (Jetty Plugin)
-│   └── src/main/
-│       ├── java/com/travelplanner/               # Core backend services, servlets, and models
-│       └── webapp/WEB-INF/
-│           └── web.xml                           # Servlet and Filter mappings
-├── frontend/
-│   ├── package.json                              # React dependencies mapping
-│   ├── vite.config.js                            # Vite configurations (Port: 5173)
-│   ├── index.html                                # Main DOM root mapping
-│   └── src/                                      # React components, pages, and API utilities
-└── README.md                                     # System documentation
-```
+Prerequisites: Java 17, Maven, and Node.js 18 or later.
 
-## 🚀 Setup & Launch Instructions
+Start the API:
 
-**Prerequisites:** Java JDK 17+, Apache Maven, Node.js (v18+).
-
-### 1. Launch the Backend Server
-Navigate to the `backend/` directory and run:
-```bash
+```sh
 cd backend
 mvn jetty:run
 ```
-The server will run on `http://localhost:8080`.
 
-### 2. Launch the Frontend React Client
-Navigate to the `frontend/` directory, install dependencies, and run:
-```bash
+Start the frontend in another terminal:
+
+```sh
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
-Open `http://localhost:5173` in your browser.
 
-## 🔑 Demo Account Credentials
+The Vite development server proxies `/api` to `http://localhost:8080`. Register an account from the login page. The API permits local development origins and a deployed frontend origin configured with `FRONTEND_ORIGIN`.
 
-| Role | Username | Password | Access Details |
-| :--- | :--- | :--- | :--- |
-| **Standard User** | `user` | `user123` | Can plan trips, check budgets, edit schedules. Comes with a default Paris trip. |
-| **Administrator** | `admin` | `admin123` | Access Admin Console to view global metrics, manage users, and add destinations. |
+## Deployment configuration and limitations
+
+The Vercel project builds and serves the React frontend only. Deploy the Java API separately, then set `VITE_API_BASE_URL` to its HTTPS base URL when building the frontend and `FRONTEND_ORIGIN` to the exact frontend origin on the API service. Session cookies must be configured for cross-site HTTPS requests if the API and frontend use different sites; a same-site reverse proxy is preferable.
+
+The Java `DatabaseSimulator` stores users, trips, and destination records in process memory, so this implementation is suitable for local evaluation only: data is lost when the API restarts and does not scale across instances. Configure a persistent database and a production session store before using this deployment for real user data. The interest-aware itinerary suggestions are generated by the existing backend rules; no external generative AI provider or API credentials are configured in this repository.
+
+## Validation
+
+Run `npm ci && npm run build` in `frontend/` and `mvn test` in `backend/` after installing dependencies. Browser map and weather requests require internet access.

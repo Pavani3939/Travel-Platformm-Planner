@@ -36,7 +36,7 @@ public class TripServlet extends HttpServlet {
                 return;
             }
             // Ensure owner or admin
-            if (!trip.getUserId().equals(user.getId()) && !"ADMIN".equals(user.getRole())) {
+            if (!trip.getUserId().equals(user.getId())) {
                 sendError(response, HttpServletResponse.SC_FORBIDDEN, "Access denied");
                 return;
             }
@@ -66,6 +66,8 @@ public class TripServlet extends HttpServlet {
             String startDate = body.get("startDate").getAsString();
             String endDate = body.get("endDate").getAsString();
             double budget = body.get("budget").getAsDouble();
+            String preferences = body.has("preferences") && !body.get("preferences").isJsonNull()
+                    ? body.get("preferences").getAsString() : "";
 
             Destination dest = DatabaseSimulator.getDestinationById(destinationId);
             if (dest == null) {
@@ -90,7 +92,7 @@ public class TripServlet extends HttpServlet {
                 double dailyBudget = budget / days;
                 List<Itinerary> itineraryList = new ArrayList<>();
                 for (int i = 1; i <= days; i++) {
-                    List<String> dailyActivities = generateActivitiesForDay(i, dest, dailyBudget, (int) days);
+                    List<String> dailyActivities = generateActivitiesForDay(i, dest, dailyBudget, (int) days, preferences);
                     itineraryList.add(new Itinerary(i, dailyActivities, "Not Specified"));
                 }
                 trip.setItinerary(itineraryList);
@@ -106,10 +108,11 @@ public class TripServlet extends HttpServlet {
         }
     }
 
-    private List<String> generateActivitiesForDay(int day, Destination dest, double dailyBudget, int totalDays) {
+    private List<String> generateActivitiesForDay(int day, Destination dest, double dailyBudget, int totalDays, String preferences) {
         List<String> activities = new ArrayList<>();
         String destName = dest.getName().toLowerCase();
         String desc = dest.getDescription().toLowerCase();
+        String interests = preferences == null ? "" : preferences.toLowerCase();
         
         if (day == 1) {
             activities.add("Arrival and Hotel Check-in at " + dest.getName());
@@ -130,7 +133,19 @@ public class TripServlet extends HttpServlet {
                 activities.add("Try local street food and public markets");
             }
             
-            // Location-based activity
+            if (interests.contains("food") || interests.contains("culinary") || interests.contains("restaurant")) {
+                activities.add("Explore local markets and regional food in " + dest.getName());
+            }
+            if (interests.contains("museum") || interests.contains("history") || interests.contains("culture")) {
+                activities.add("Visit a museum or cultural landmark in " + dest.getName());
+            }
+            if (interests.contains("nature") || interests.contains("outdoor") || interests.contains("hike")) {
+                activities.add("Spend time outdoors exploring the natural surroundings");
+            }
+            if (interests.contains("relaxed") || interests.contains("slow")) {
+                activities.add("Keep the afternoon flexible for a relaxed neighborhood stroll");
+            }
+            // Destination-based suggestions
             if (desc.contains("beach") || destName.contains("maldives") || destName.contains("bali")) {
                 activities.add("Relax at the beach and try water sports");
             } else if (desc.contains("histor") || destName.contains("rome") || destName.contains("kyoto") || desc.contains("ancient")) {
@@ -165,7 +180,7 @@ public class TripServlet extends HttpServlet {
         }
 
         // Check ownership
-        if (!existingTrip.getUserId().equals(user.getId()) && !"ADMIN".equals(user.getRole())) {
+        if (!existingTrip.getUserId().equals(user.getId())) {
             sendError(response, HttpServletResponse.SC_FORBIDDEN, "Access denied");
             return;
         }
@@ -241,7 +256,7 @@ public class TripServlet extends HttpServlet {
         }
 
         // Ownership validation
-        if (!existingTrip.getUserId().equals(user.getId()) && !"ADMIN".equals(user.getRole())) {
+        if (!existingTrip.getUserId().equals(user.getId())) {
             sendError(response, HttpServletResponse.SC_FORBIDDEN, "Access denied");
             return;
         }

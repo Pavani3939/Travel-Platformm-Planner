@@ -3,8 +3,6 @@ package com.travelplanner.service;
 import com.travelplanner.model.User;
 import com.travelplanner.model.Destination;
 import com.travelplanner.model.Trip;
-import com.travelplanner.model.Itinerary;
-import com.travelplanner.model.Expense;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +17,6 @@ public class DatabaseSimulator {
     // Static initializer block to populate initial/default data
     static {
         // Create initial users
-        users.add(new User("usr-admin", "admin", "admin123", "admin@travelplanner.com", "ADMIN", "System Administrator"));
-        users.add(new User("usr-1", "user", "user123", "john.doe@gmail.com", "USER", "John Doe"));
 
         // Create standard destinations with Rupee amounts (estimated daily budgets)
         destinations.add(new Destination(
@@ -68,24 +64,6 @@ public class DatabaseSimulator {
             "Netherlands", "https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?auto=format&fit=crop&w=600&q=80", 10500.0
         ));
 
-        // Create a default trip for John Doe (usr-1)
-        Trip defaultTrip = new Trip("trip-1", "usr-1", "dest-1", "2026-07-01", "2026-07-04", 80000.0);
-        
-        // Populate itinerary (3 days)
-        List<Itinerary> defaultItinerary = new ArrayList<>();
-        defaultItinerary.add(new Itinerary(1, new ArrayList<>(List.of("Arrive in Paris, check in to hotel", "Evening cruise on the Seine River")), "Hotel de Ville"));
-        defaultItinerary.add(new Itinerary(2, new ArrayList<>(List.of("Visit the Eiffel Tower", "Explore the Louvre Museum")), "Hotel de Ville"));
-        defaultItinerary.add(new Itinerary(3, new ArrayList<>(List.of("Stroll down Champs-Élysées", "Visit Notre-Dame Cathedral", "Dinner at local bistro")), "Hotel de Ville"));
-        defaultTrip.setItinerary(defaultItinerary);
-
-        // Populate expenses in Rupees
-        List<Expense> defaultExpenses = new ArrayList<>();
-        defaultExpenses.add(new Expense("exp-1", "Flight tickets", 35000.0, "Transport"));
-        defaultExpenses.add(new Expense("exp-2", "Hotel room (3 nights)", 25000.0, "Lodging"));
-        defaultExpenses.add(new Expense("exp-3", "Louvre tickets", 3000.0, "Activities"));
-        defaultTrip.setExpenses(defaultExpenses);
-
-        trips.add(defaultTrip);
     }
 
     // --- User CRUD ---
@@ -105,6 +83,7 @@ public class DatabaseSimulator {
         if (getUserByUsername(user.getUsername()) != null) {
             throw new Exception("Username already exists.");
         }
+        user.setPassword(PasswordHasher.hash(user.getPassword()));
         user.setId("usr-" + UUID.randomUUID().toString().substring(0, 8));
         user.setRole("USER"); // default registration role
         users.add(user);

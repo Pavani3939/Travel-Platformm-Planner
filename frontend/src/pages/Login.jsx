@@ -90,13 +90,6 @@ export default function Login({ onLoginSuccess }) {
           Don't have an account? <Link to="/register">Register here</Link>
         </div>
 
-        <div style={styles.demoCredentials}>
-          <p style={styles.demoTitle}>Demo Accounts:</p>
-          <div style={styles.demoList}>
-            <div><span>User:</span> <code>user</code> / <code>user123</code></div>
-            <div><span>Admin:</span> <code>admin</code> / <code>admin123</code></div>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -125,26 +118,5 @@ const styles = {
     width: '100%',
     marginTop: '1rem',
     borderRadius: '8px',
-  },
-  demoCredentials: {
-    marginTop: '2rem',
-    padding: '0.75rem',
-    borderRadius: '6px',
-    backgroundColor: 'rgba(255, 255, 255, 0.02)',
-    border: '1px dashed rgba(255, 255, 255, 0.05)',
-  },
-  demoTitle: {
-    fontSize: '0.75rem',
-    fontWeight: '700',
-    color: '#6b7280',
-    textTransform: 'uppercase',
-    marginBottom: '0.25rem',
-  },
-  demoList: {
-    fontSize: '0.75rem',
-    color: '#9ca3af',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.15rem',
   },
 };

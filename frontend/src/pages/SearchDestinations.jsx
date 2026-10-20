@@ -7,6 +7,7 @@ import { Search, MapPin, Calendar, DollarSign, X, AlertCircle, Compass } from 'l
 export default function SearchDestinations() {
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterBudget, setFilterBudget] = useState('');
   const [filterInterest, setFilterInterest] = useState('');
@@ -21,6 +22,7 @@ export default function SearchDestinations() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [budget, setBudget] = useState('');
+  const [preferences, setPreferences] = useState('');
   const [modalError, setModalError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -43,7 +45,7 @@ export default function SearchDestinations() {
       const list = await api.get('/destinations');
       setDestinations(list);
     } catch (err) {
-      console.error('Failed to fetch destinations:', err);
+      setLoadError(err.message || 'Could not load destinations.');
     } finally {
       setLoading(false);
     }
@@ -89,7 +91,8 @@ export default function SearchDestinations() {
         destinationId: selectedDest.id,
         startDate,
         endDate,
-        budget: budgetVal
+        budget: budgetVal,
+        preferences
       });
       handleClosePlanModal();
       navigate('/trips');
@@ -141,6 +144,8 @@ export default function SearchDestinations() {
           <p>Find the perfect location and estimate costs for your next vacation.</p>
         </div>
       </div>
+
+      {loadError && <div className="alert alert-error" role="alert">{loadError} <button className="btn btn-secondary btn-sm" onClick={() => { setLoading(true); setLoadError(''); fetchDestinations(); }}>Retry</button></div>}
 
       {/* Search & AI Recommendation Filters Bar */}
       <div className="glass-card" style={styles.searchBarCard}>
@@ -271,6 +276,11 @@ export default function SearchDestinations() {
                     required
                   />
                 </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Travel preferences (optional)</label>
+                <input className="form-input" placeholder="e.g. museums, local food, relaxed pace" value={preferences} onChange={e => setPreferences(e.target.value)} maxLength={240} />
               </div>
 
               <div style={styles.modalActions}>

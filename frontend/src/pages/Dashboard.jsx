@@ -10,6 +10,7 @@ export default function Dashboard({ user }) {
   const [trips, setTrips] = useState([]);
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function Dashboard({ user }) {
         setTrips(tripsData);
         setDestinations(destinationsData);
       } catch (err) {
-        console.error('Failed to load dashboard data:', err);
+        setLoadError(err.message || 'Failed to load dashboard data.');
       } finally {
         setLoading(false);
       }
@@ -72,6 +73,8 @@ export default function Dashboard({ user }) {
   if (loading) {
     return <div style={styles.loading}>Loading Dashboard...</div>;
   }
+
+  if (loadError) return <div className="glass-card" role="alert"><h2>Dashboard unavailable</h2><p style={{ color: '#9ca3af', margin: '1rem 0' }}>{loadError}</p><button className="btn btn-primary" onClick={() => window.location.reload()}>Try again</button></div>;
 
   return (
     <div className="animate-fade-in">

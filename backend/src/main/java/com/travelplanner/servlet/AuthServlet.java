@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.travelplanner.model.User;
 import com.travelplanner.service.DatabaseSimulator;
+import com.travelplanner.service.PasswordHasher;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -61,7 +62,7 @@ public class AuthServlet extends HttpServlet {
             );
 
             // Automatically log the user in after registration
-            HttpSession session = request.getSession(true);
+            HttpSession session = startFreshSession(request);
             session.setAttribute("user", responseUser);
 
             sendJson(response, HttpServletResponse.SC_CREATED, responseUser);
@@ -83,7 +84,7 @@ public class AuthServlet extends HttpServlet {
             String password = body.get("password").getAsString();
 
             User user = DatabaseSimulator.getUserByUsername(username);
-            if (user == null || !user.getPassword().equals(password)) {
+            if (user == null || !PasswordHasher.verify(password, user.getPassword())) {
                 sendError(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid username or password");
                 return;
             }
@@ -93,7 +94,7 @@ public class AuthServlet extends HttpServlet {
                 user.getId(), user.getUsername(), null, user.getEmail(), user.getRole(), user.getFullName()
             );
 
-            HttpSession session = request.getSession(true);
+            HttpSession session = startFreshSession(request);
             session.setAttribute("user", responseUser);
 
             sendJson(response, HttpServletResponse.SC_OK, responseUser);
@@ -135,6 +136,12 @@ public class AuthServlet extends HttpServlet {
             freshUser.getId(), freshUser.getUsername(), null, freshUser.getEmail(), freshUser.getRole(), freshUser.getFullName()
         );
         sendJson(response, HttpServletResponse.SC_OK, responseUser);
+    }
+
+    private HttpSession startFreshSession(HttpServletRequest request) {
+        HttpSession oldSession = request.getSession(false);
+        if (oldSession != null) oldSession.invalidate();
+        return request.getSession(true);
     }
 
     private void sendJson(HttpServletResponse response, int status, Object obj) throws IOException {

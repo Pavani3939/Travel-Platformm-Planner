@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Trips from './pages/Trips';
 import TripDetail from './pages/TripDetail';
 import SearchDestinations from './pages/SearchDestinations';
+import DestinationDetail from './pages/DestinationDetail';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
 
@@ -65,6 +66,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Dashboard user={user} />} />
               <Route path="/destinations" element={<SearchDestinations />} />
+              <Route path="/destinations/:id" element={<DestinationDetail />} />
               <Route path="/trips" element={<Trips />} />
               <Route path="/trips/:id" element={<TripDetail />} />
               <Route path="/profile" element={<Profile user={user} />} />

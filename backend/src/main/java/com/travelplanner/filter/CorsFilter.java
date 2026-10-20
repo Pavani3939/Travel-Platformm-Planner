@@ -19,17 +19,15 @@ public class CorsFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // Retrieve origin header from the request
+        // Permit only the configured frontend and local development origins.
         String origin = httpRequest.getHeader("Origin");
-        
-        // Dynamic origin reflection to support credentials
-        if (origin != null) {
+        String configuredOrigin = System.getenv("FRONTEND_ORIGIN");
+        boolean localOrigin = "http://localhost:5173".equals(origin) || "http://127.0.0.1:5173".equals(origin);
+        if (origin != null && (localOrigin || origin.equals(configuredOrigin))) {
             httpResponse.setHeader("Access-Control-Allow-Origin", origin);
-        } else {
-            httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+            httpResponse.setHeader("Vary", "Origin");
+            httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
         }
-
-        httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
         httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, Origin");
         httpResponse.setHeader("Access-Control-Max-Age", "3600");

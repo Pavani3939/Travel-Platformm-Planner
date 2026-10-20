@@ -1,4 +1,5 @@
-import { Compass, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function DestinationCard({ destination, onPlanTrip }) {
   const imageUrl = destination.imageUrl || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80';
@@ -14,6 +15,7 @@ export default function DestinationCard({ destination, onPlanTrip }) {
       
       <div style={styles.body}>
         <p style={styles.description}>{destination.description}</p>
+        <Link to={`/destinations/${destination.id}`} className="btn btn-secondary btn-sm">Explore details</Link>
         
         <div style={styles.budgetRow}>
           <div style={styles.budgetLabelContainer}>

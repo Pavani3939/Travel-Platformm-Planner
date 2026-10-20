@@ -1,5 +1,24 @@
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
+function errorMessage(value) {
+  if (typeof value === 'string' && value.trim()) return value;
+  if (Array.isArray(value)) {
+    const messages = value.map(errorMessage).filter(Boolean);
+    if (messages.length) return messages.join(' ');
+  }
+  if (value && typeof value === 'object') {
+    for (const key of ['message', 'error', 'detail', 'title']) {
+      const message = errorMessage(value[key]);
+      if (message) return message;
+    }
+    if (value.errors) {
+      const message = errorMessage(value.errors);
+      if (message) return message;
+    }
+  }
+  return '';
+}
+
 async function request(method, endpoint, body) {
   const path = endpoint.startsWith('/api/') ? endpoint : `/api${endpoint}`;
   let response;
@@ -14,7 +33,9 @@ async function request(method, endpoint, body) {
     throw new Error('Unable to reach the travel service. Check your connection and try again.');
   }
   const data = response.status === 204 ? null : await response.json().catch(() => null);
-  if (!response.ok) throw new Error(data?.error || data?.message || `Request failed (${response.status}).`);
+  if (!response.ok) {
+    throw new Error(errorMessage(data) || `Request failed (${response.status}).`);
+  }
   return data;
 }
 
